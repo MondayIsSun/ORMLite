@@ -1,4 +1,4 @@
-package mr.lmd.personal.ormliteapplication.ORMLiteABC;
+package mr.lmd.personal.ormliteapplication.template;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,6 +9,12 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+import mr.lmd.personal.ormliteapplication.template.bean.Article;
+import mr.lmd.personal.ormliteapplication.template.bean.Student;
+import mr.lmd.personal.ormliteapplication.template.bean.User;
 
 /**
  * Created by LinMingDao on 2015/11/6.
@@ -17,13 +23,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String TABLE_NAME = "sqlite-test.db";
 
-    /**
-     * userDao ，每张表对应一个
-     */
-    private Dao<User, Integer> userDao;
+    private Map<String, Dao> daos = new HashMap<String, Dao>();
 
     private DatabaseHelper(Context context) {
-        super(context, TABLE_NAME, null, 2);
+        super(context, TABLE_NAME, null, 4);
     }
 
     @Override
@@ -31,6 +34,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                          ConnectionSource connectionSource) {
         try {
             TableUtils.createTable(connectionSource, User.class);
+            TableUtils.createTable(connectionSource, Article.class);
+            TableUtils.createTable(connectionSource, Student.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -38,10 +43,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database,
-                          ConnectionSource connectionSource,
-                          int oldVersion, int newVersion) {
+                          ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
             TableUtils.dropTable(connectionSource, User.class, true);
+            TableUtils.dropTable(connectionSource, Article.class, true);
+            TableUtils.dropTable(connectionSource, Student.class, true);
             onCreate(database, connectionSource);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -57,6 +63,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      * @return
      */
     public static synchronized DatabaseHelper getHelper(Context context) {
+        context = context.getApplicationContext();
         if (instance == null) {
             synchronized (DatabaseHelper.class) {
                 if (instance == null)
@@ -67,17 +74,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return instance;
     }
 
-    /**
-     * 获得userDao
-     *
-     * @return
-     * @throws SQLException
-     */
-    public Dao<User, Integer> getUserDao() throws SQLException {
-        if (userDao == null) {
-            userDao = getDao(User.class);
+    public synchronized Dao getDao(Class clazz) throws SQLException {
+        Dao dao = null;
+        String className = clazz.getSimpleName();
+
+        if (daos.containsKey(className)) {
+            dao = daos.get(className);
         }
-        return userDao;
+        if (dao == null) {
+            dao = super.getDao(clazz);
+            daos.put(className, dao);
+        }
+        return dao;
     }
 
     /**
@@ -86,6 +94,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void close() {
         super.close();
-        userDao = null;
+
+        for (String key : daos.keySet()) {
+            Dao dao = daos.get(key);
+            dao = null;
+        }
     }
 }
