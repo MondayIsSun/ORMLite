@@ -1,4 +1,4 @@
-# 顺便谈谈我对单例模式的理解——>单例模式最高效写法
+# 顺便谈谈我对单例模式的理解：单例模式最高效写法
 
 	private static DatabaseHelper instance;
 
