@@ -70,7 +70,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     instance = new DatabaseHelper(context);
             }
         }
-
         return instance;
     }
 
