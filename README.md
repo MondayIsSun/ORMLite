@@ -1,4 +1,4 @@
-# 随便谈谈我对单例模式的理解
+# 顺便谈谈我对单例模式的理解
 
 	private static DatabaseHelper instance;
 
