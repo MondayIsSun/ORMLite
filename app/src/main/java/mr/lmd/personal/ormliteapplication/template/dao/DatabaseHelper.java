@@ -21,14 +21,46 @@ import mr.lmd.personal.ormliteapplication.template.bean.User;
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
+    /**
+     * 一个数据库下有多张表——>多个对应映射类——>多个DAO
+     * 指定要创建的数据库名
+     */
     private static final String TABLE_NAME = "sqlite-test.db";
 
-    private Map<String, Dao> daos = new HashMap<String, Dao>();
+    /**
+     * 统一管理多个DAO类
+     */
+    private Map<String, Dao> mDAOs = new HashMap<>();
+
+    private static DatabaseHelper mInstance;
 
     private DatabaseHelper(Context context) {
         super(context, TABLE_NAME, null, 4);
     }
 
+    /**
+     * 单例获取该Helper
+     *
+     * @param context
+     * @return
+     */
+    public static synchronized DatabaseHelper getHelper(Context context) {
+        context = context.getApplicationContext();
+        if (mInstance == null) {
+            synchronized (DatabaseHelper.class) {
+                if (mInstance == null)
+                    mInstance = new DatabaseHelper(context);
+            }
+        }
+        return mInstance;
+    }
+
+    /**
+     * 数据库创建逻辑
+     *
+     * @param database
+     * @param connectionSource
+     */
     @Override
     public void onCreate(SQLiteDatabase database,
                          ConnectionSource connectionSource) {
@@ -41,10 +73,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
+    /**
+     * 数据库升级逻辑
+     *
+     * @param database
+     * @param connectionSource
+     * @param oldVersion
+     * @param newVersion
+     */
     @Override
     public void onUpgrade(SQLiteDatabase database,
                           ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
+            /**
+             * 如何升级已经有数据的数据库?
+             */
             TableUtils.dropTable(connectionSource, User.class, true);
             TableUtils.dropTable(connectionSource, Article.class, true);
             TableUtils.dropTable(connectionSource, Student.class, true);
@@ -54,35 +97,23 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    private static DatabaseHelper instance;
-
     /**
-     * 单例获取该Helper
+     * 提供获取相应DAO的接口
      *
-     * @param context
+     * @param clazz
      * @return
+     * @throws SQLException
      */
-    public static synchronized DatabaseHelper getHelper(Context context) {
-        context = context.getApplicationContext();
-        if (instance == null) {
-            synchronized (DatabaseHelper.class) {
-                if (instance == null)
-                    instance = new DatabaseHelper(context);
-            }
-        }
-        return instance;
-    }
-
     public synchronized Dao getDao(Class clazz) throws SQLException {
         Dao dao = null;
         String className = clazz.getSimpleName();
 
-        if (daos.containsKey(className)) {
-            dao = daos.get(className);
+        if (mDAOs.containsKey(className)) {
+            dao = mDAOs.get(className);
         }
         if (dao == null) {
             dao = super.getDao(clazz);
-            daos.put(className, dao);
+            mDAOs.put(className, dao);
         }
         return dao;
     }
@@ -93,9 +124,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void close() {
         super.close();
-
-        for (String key : daos.keySet()) {
-            Dao dao = daos.get(key);
+        for (String key : mDAOs.keySet()) {
+            Dao dao = mDAOs.get(key);
             dao = null;
         }
     }

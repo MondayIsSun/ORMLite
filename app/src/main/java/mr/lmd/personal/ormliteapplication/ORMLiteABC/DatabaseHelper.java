@@ -26,16 +26,35 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         super(context, TABLE_NAME, null, 2);
     }
 
+    /**
+     * 数据库创建逻辑：
+     * 注意与Sqlite一样的是:如果数据库不存在会调用一次，如果已经存在了则不会调用了
+     * 所以需要数据库的版本号——>响应需求变更，数据库升级逻辑
+     *
+     * @param database
+     * @param connectionSource
+     */
     @Override
     public void onCreate(SQLiteDatabase database,
                          ConnectionSource connectionSource) {
         try {
             TableUtils.createTable(connectionSource, User.class);
+            /**
+             * TableUtils.createTable(connectionSource, XXX.class);
+             */
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * 数据库升级逻辑
+     *
+     * @param database
+     * @param connectionSource
+     * @param oldVersion
+     * @param newVersion
+     */
     @Override
     public void onUpgrade(SQLiteDatabase database,
                           ConnectionSource connectionSource,
@@ -63,7 +82,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     instance = new DatabaseHelper(context);
             }
         }
-
         return instance;
     }
 
