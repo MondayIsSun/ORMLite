@@ -6,7 +6,6 @@ import android.content.Context;
 
 import com.j256.ormlite.dao.Dao;
 
-import mr.lmd.personal.ormliteapplication.template.DatabaseHelper;
 import mr.lmd.personal.ormliteapplication.template.bean.User;
 
 public class UserDao {

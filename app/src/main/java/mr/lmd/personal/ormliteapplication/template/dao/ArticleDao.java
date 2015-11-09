@@ -7,7 +7,6 @@ import com.j256.ormlite.dao.Dao;
 import java.sql.SQLException;
 import java.util.List;
 
-import mr.lmd.personal.ormliteapplication.template.DatabaseHelper;
 import mr.lmd.personal.ormliteapplication.template.bean.Article;
 import mr.lmd.personal.ormliteapplication.template.bean.User;
 

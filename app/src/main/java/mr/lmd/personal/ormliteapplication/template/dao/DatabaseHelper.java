@@ -1,4 +1,4 @@
-package mr.lmd.personal.ormliteapplication.template;
+package mr.lmd.personal.ormliteapplication.template.dao;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
