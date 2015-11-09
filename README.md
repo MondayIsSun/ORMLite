@@ -1,4 +1,6 @@
-# ORMLite最佳实践
+## ORMLite最佳实践
+
+### 一、ORMLite基础
 
 0、题外话：高效的单例模式写法
 
@@ -222,3 +224,13 @@
 	    }
 	
 	}
+
+### 一、ORMLite进阶——>看官方文档
+
+BaseDaoImpl——>顾名思义就是ORMLite框架提供的各种DAO操作的基础类
+
+DeleteBuilder
+
+QueryBuilder
+
+Where
