@@ -83,7 +83,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase database,
-                          ConnectionSource connectionSource, int oldVersion, int newVersion) {
+                          ConnectionSource connectionSource,
+                          int oldVersion,
+                          int newVersion) {
         try {
             /**
              * 如何升级已经有数据的数据库?
