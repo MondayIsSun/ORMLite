@@ -1,6 +1,6 @@
-# 顺便谈谈我对单例模式的理解：单例模式最高效写法
+# 单例模式最高效写法
 
-	private static DatabaseHelper instance;
+    private static DatabaseHelper instance;
 
     private DatabaseHelper(Context context) {
         super(context, TABLE_NAME, null, 4);
