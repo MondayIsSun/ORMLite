@@ -225,7 +225,7 @@
 	
 	}
 
-### 一、ORMLite进阶——>看官方文档
+### 二、ORMLite进阶——>看官方文档
 
 BaseDaoImpl——>顾名思义就是ORMLite框架提供的各种DAO操作的基础类
 
